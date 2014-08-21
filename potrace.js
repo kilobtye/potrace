@@ -71,8 +71,8 @@ var Potrace = (function() {
   };
     
   Bitmap.prototype.copy = function() {
-    var bm = new Bitmap(this.w, this.h);
-    for (var i = 0; i < this.size; i++) {
+    var bm = new Bitmap(this.w, this.h), i;
+    for (i = 0; i < this.size; i++) {
       bm.data[i] = this.data[i];
     }
     return bm;
@@ -102,7 +102,6 @@ var Potrace = (function() {
 
   var imgElement = document.createElement("img"),
       imgCanvas = document.createElement("canvas"),
-      pixelCanvas = document.createElement("canvas"),
       bm = null,
       pathlist = [],
       callback,
@@ -115,7 +114,7 @@ var Potrace = (function() {
         opttolerance: 0.2
       };
 
-  imgElement.onload = function(e) {
+  imgElement.onload = function() {
     loadCanvas();
     loadBm();
   };
@@ -143,8 +142,11 @@ var Potrace = (function() {
   }
   
   function setParameter(obj) {
+   var key;
    for (key in obj) {
-     info[key] = obj[key];
+     if (obj.hasOwnProperty(key)) {
+       info[key] = obj[key];
+     }
     }
   }
   
@@ -159,10 +161,10 @@ var Potrace = (function() {
     var ctx = imgCanvas.getContext('2d');
     bm = new Bitmap(imgCanvas.width, imgCanvas.height);
     var imgdataobj = ctx.getImageData(0, 0, bm.w, bm.h);
-    var l = imgdataobj.data.length;
-    for (var i = 0, j = 0; i < l; i += 4, j++) {
-      var color = 0.2126 * imgdataobj.data[i] + 0.7153 * imgdataobj.data[i + 1]
-           + 0.0721 * imgdataobj.data[i + 2];
+    var l = imgdataobj.data.length, i, j, color;
+    for (i = 0, j = 0; i < l; i += 4, j++) {
+      color = 0.2126 * imgdataobj.data[i] + 0.7153 * imgdataobj.data[i + 1] +
+          0.0721 * imgdataobj.data[i + 2];
       bm.data[j] = (color < 128 ? 1 : 0);
     }
     info.isReady = true;
@@ -184,9 +186,10 @@ var Potrace = (function() {
     }
     
     function majority(x, y) {
-      for (var i = 2; i < 5; i++) {
-        var ct = 0;
-        for (var a = -i + 1; a <= i - 1; a++) {
+      var i, a, ct;
+      for (i = 2; i < 5; i++) {
+        ct = 0;
+        for (a = -i + 1; a <= i - 1; a++) {
           ct += bm1.at(x + a, y + i - 1) ? 1 : -1;
           ct += bm1.at(x + i - 1, y + a - 1) ? 1 : -1;
           ct += bm1.at(x + a - 1, y - i) ? 1 : -1;
@@ -205,6 +208,8 @@ var Potrace = (function() {
       var path = new Path(),
         x = point.x, y = point.y,
         dirx = 0, diry = 1, tmp;
+      
+      path.sign = bm.at(point.x, point.y) ? "+" : "-";
       
       while (1) {
         path.pt.push(new Point(x, y));
@@ -229,11 +234,11 @@ var Potrace = (function() {
         var r = bm1.at(x + (dirx - diry - 1) / 2, y + (diry + dirx - 1) / 2);
         
         if (r && !l) {
-          if (info.turnpolicy === "right"
-          || (info.turnpolicy === "black" && sign === '+')
-          || (info.turnpolicy === "white" && sign === '-')
-          || (info.turnpolicy === "majority" && majority(x, y))
-          || (info.turnpolicy === "minority" && !majority(x, y))) {
+          if (info.turnpolicy === "right" ||
+          (info.turnpolicy === "black" && path.sign === '+') ||
+          (info.turnpolicy === "white" && path.sign === '-') ||
+          (info.turnpolicy === "majority" && majority(x, y)) ||
+          (info.turnpolicy === "minority" && !majority(x, y))) {
             tmp = dirx;
             dirx = -diry;
             diry = tmp;
@@ -258,7 +263,7 @@ var Potrace = (function() {
     function xorPath(path){
       var y1 = path.pt[0].y,
         len = path.len,
-        x, y, minX, minY, i, j;
+        x, y, maxX, minY, i, j;
       for (i = 1; i < len; i++) {
         x = path.pt[i].x;
         y = path.pt[i].y;
@@ -278,7 +283,6 @@ var Potrace = (function() {
     while (currentPoint = findNext(currentPoint)) {
 
       path = findPath(currentPoint);
-      path.sign = bm.at(currentPoint.x, currentPoint.y) ? "+" : "-";
       
       xorPath(path);
       
@@ -437,7 +441,7 @@ var Potrace = (function() {
       
       d = b * b - 4 * a * c;
     
-      if (a==0 || d<0) {
+      if (a===0 || d<0) {
         return -1.0;
       }
     
@@ -456,7 +460,7 @@ var Potrace = (function() {
     }
     
     function calcSums(path) {
-      var i, x, y, sum = null;
+      var i, x, y;
       path.x0 = path.pt[0].x;
       path.y0 = path.pt[0].y;
       
@@ -485,7 +489,7 @@ var Potrace = (function() {
           dk = new Point(),
           foundk;
       
-      var i, j, k, k1, a, b, c, d, k = 0;
+      var i, j, k1, a, b, c, d, k = 0;
       for(i = n - 1; i >= 0; i--){
         if (pt[i].x != pt[k].x && pt[i].y != pt[k].y) {
           k = i + 1;
@@ -589,7 +593,7 @@ var Potrace = (function() {
         
         var n = path.len, pt = path.pt, sums = path.sums;
         var x, y, xy, x2, y2,
-          k, a, b, c, d,
+          k, a, b, c, s,
           px, py, ex, ey,
           r = 0;
         if (j>=n) {
@@ -597,7 +601,7 @@ var Potrace = (function() {
           r = 1;
         }
         
-        if (r == 0) {
+        if (r === 0) {
           x = sums[j+1].x - sums[i].x;
           y = sums[j+1].y - sums[i].y;
           x2 = sums[j+1].x2 - sums[i].x2;
@@ -741,18 +745,18 @@ var Potrace = (function() {
       
         if (Math.abs(a) >= Math.abs(c)) {
           l = Math.sqrt(a*a+b*b);
-          if (l!=0) {
+          if (l!==0) {
             dir.x = -b/l;
             dir.y = a/l;
           }
         } else {
           l = Math.sqrt(c*c+b*b);
-          if (l!=0) {
+          if (l!==0) {
             dir.x = -c/l;
             dir.y = b/l;
           }
         }
-        if (l==0) {
+        if (l===0) {
           dir.x = dir.y = 0; 
         }
       }
@@ -777,7 +781,7 @@ var Potrace = (function() {
       for (i=0; i<m; i++) {
         q[i] = new Quad();
         d = dir[i].x * dir[i].x + dir[i].y * dir[i].y;
-        if (d == 0.0) {
+        if (d === 0.0) {
           for (j=0; j<3; j++) {
             for (k=0; k<3; k++) {
               q[i].data[j * 3 + k] = 0;
@@ -814,7 +818,7 @@ var Potrace = (function() {
         while(1) {
           
           det = Q.at(0, 0)*Q.at(1, 1) - Q.at(0, 1)*Q.at(1, 0);
-          if (det != 0.0) {
+          if (det !== 0.0) {
             w.x = (-Q.at(0, 2)*Q.at(1, 1) + Q.at(1, 2)*Q.at(0, 1)) / det;
             w.y = ( Q.at(0, 2)*Q.at(1, 0) - Q.at(1, 2)*Q.at(0, 0)) / det;
             break;
@@ -840,7 +844,7 @@ var Potrace = (function() {
         }
         dx = Math.abs(w.x-s.x);
         dy = Math.abs(w.y-s.y);
-        if (dx <= .5 && dy <= .5) {
+        if (dx <= 0.5 && dy <= 0.5) {
           path.curve.vertex[i] = new Point(w.x+x0, w.y+y0);
           continue;
         }
@@ -849,13 +853,13 @@ var Potrace = (function() {
         xmin = s.x;
         ymin = s.y;
     
-        if (Q.at(0, 0) != 0.0) {
+        if (Q.at(0, 0) !== 0.0) {
           for (z=0; z<2; z++) {
             w.y = s.y-0.5+z;
             w.x = - (Q.at(0, 1) * w.y + Q.at(0, 2)) / Q.at(0, 0);
             dx = Math.abs(w.x-s.x);
             cand = quadform(Q, w);
-            if (dx <= .5 && cand < min) {
+            if (dx <= 0.5 && cand < min) {
               min = cand;
               xmin = w.x;
               ymin = w.y;
@@ -863,13 +867,13 @@ var Potrace = (function() {
           }
         }
   
-        if (Q.at(1, 1) != 0.0) {
+        if (Q.at(1, 1) !== 0.0) {
           for (z=0; z<2; z++) {
             w.x = s.x-0.5+z;
             w.y = - (Q.at(1, 0) * w.x + Q.at(1, 2)) / Q.at(1, 1);
             dy = Math.abs(w.y-s.y);
             cand = quadform(Q, w);
-            if (dy <= .5 && cand < min) {
+            if (dy <= 0.5 && cand < min) {
               min = cand;
               xmin = w.x;
               ymin = w.y;
@@ -916,7 +920,7 @@ var Potrace = (function() {
         p4 = interval(1/2.0, curve.vertex[k], curve.vertex[j]);
     
         denom = ddenom(curve.vertex[i], curve.vertex[k]);
-        if (denom != 0.0) {
+        if (denom !== 0.0) {
           dd = dpara(curve.vertex[i], curve.vertex[j], curve.vertex[k]) / denom;
           dd = Math.abs(dd);
           alpha = dd>1 ? (1 - 1.0/dd) : 0;
@@ -936,8 +940,8 @@ var Potrace = (function() {
           } else if (alpha > 1) {
             alpha = 1;
           }
-          p2 = interval(.5+.5*alpha, curve.vertex[i], curve.vertex[j]);
-          p3 = interval(.5+.5*alpha, curve.vertex[k], curve.vertex[j]);
+          p2 = interval(0.5+0.5*alpha, curve.vertex[i], curve.vertex[j]);
+          p3 = interval(0.5+0.5*alpha, curve.vertex[k], curve.vertex[j]);
           curve.tag[j] = "CURVE";
           curve.c[3 * j + 0] = p2;
           curve.c[3 * j + 1] = p3;
@@ -964,7 +968,7 @@ var Potrace = (function() {
           area, alpha, d, d1, d2,
           p0, p1, p2, p3, pt,
           A, R, A1, A2, A3, A4,
-          s, t, ocurve;
+          s, t;
       
         if (i==j) {
           return 1;
@@ -974,7 +978,7 @@ var Potrace = (function() {
         i1 = mod(i+1, m);
         k1 = mod(k+1, m);
         conv = convc[k1];
-        if (conv == 0) {
+        if (conv === 0) {
           return 1;
         }
         d = ddist(vertex[i], vertex[i1]);
@@ -984,12 +988,12 @@ var Potrace = (function() {
           if (convc[k1] != conv) {
             return 1;
           }
-          if (sign(cprod(vertex[i], vertex[i1], vertex[k1], vertex[k2]))
-              != conv) {
+          if (sign(cprod(vertex[i], vertex[i1], vertex[k1], vertex[k2])) !=
+              conv) {
             return 1;
           }
-          if (iprod1(vertex[i], vertex[i1], vertex[k1], vertex[k2])
-             < d * ddist(vertex[k1], vertex[k2]) * -0.999847695156) {
+          if (iprod1(vertex[i], vertex[i1], vertex[k1], vertex[k2]) <
+              d * ddist(vertex[k1], vertex[k2]) * -0.999847695156) {
             return 1;
           }
         }
@@ -1019,7 +1023,7 @@ var Potrace = (function() {
         s = A2/(A2-A1);
         A = A2 * t / 2.0;
         
-        if (A == 0.0) {
+        if (A === 0.0) {
           return 1;
         }
       
@@ -1040,12 +1044,12 @@ var Potrace = (function() {
         for (k=mod(i+1,m); k!=j; k=k1) {
           k1 = mod(k+1,m);
           t = tangent(p0, p1, p2, p3, vertex[k], vertex[k1]);
-          if (t<-.5) {
+          if (t<-0.5) {
             return 1;
           }
           pt = bezier(t, p0, p1, p2, p3);
           d = ddist(vertex[k], vertex[k1]);
-          if (d == 0.0) {
+          if (d === 0.0) {
             return 1;
           }
           d1 = dpara(vertex[k], vertex[k1], pt) / d;
@@ -1062,12 +1066,12 @@ var Potrace = (function() {
         for (k=i; k!=j; k=k1) {
           k1 = mod(k+1,m);
           t = tangent(p0, p1, p2, p3, curve.c[k * 3 + 2], curve.c[k1 * 3 + 2]);
-          if (t<-.5) {
+          if (t<-0.5) {
             return 1;
           }
           pt = bezier(t, p0, p1, p2, p3);
           d = ddist(curve.c[k * 3 + 2], curve.c[k1 * 3 + 2]);
-          if (d == 0.0) {
+          if (d === 0.0) {
             return 1;
           }
           d1 = dpara(curve.c[k * 3 + 2], curve.c[k1 * 3 + 2], pt) / d;
@@ -1095,7 +1099,7 @@ var Potrace = (function() {
         opt = new Array(m + 1),
         om, i,j,r,
         o = new Opti(), p0,
-        i1, area, alpha,
+        i1, area, alpha, ocurve,
         s, t;
       
       var convc = new Array(m), areac = new Array(m + 1);
@@ -1234,26 +1238,26 @@ var Potrace = (function() {
     function path(curve) {
     
       function bezier(i) {
-        var b = 'C ' + (curve.c[i * 3 + 0].x * size).toFixed(3) + ' '
-            + (curve.c[i * 3 + 0].y * size).toFixed(3) + ',';
-        b += (curve.c[i * 3 + 1].x * size).toFixed(3) + ' '
-            + (curve.c[i * 3 + 1].y * size).toFixed(3) + ',';
-        b += (curve.c[i * 3 + 2].x * size).toFixed(3) + ' '
-            + (curve.c[i * 3 + 2].y * size).toFixed(3) + ' ';
+        var b = 'C ' + (curve.c[i * 3 + 0].x * size).toFixed(3) + ' ' +
+            (curve.c[i * 3 + 0].y * size).toFixed(3) + ',';
+        b += (curve.c[i * 3 + 1].x * size).toFixed(3) + ' ' +
+            (curve.c[i * 3 + 1].y * size).toFixed(3) + ',';
+        b += (curve.c[i * 3 + 2].x * size).toFixed(3) + ' ' +
+            (curve.c[i * 3 + 2].y * size).toFixed(3) + ' ';
         return b;
       }
     
       function segment(i) {
-        var s = 'L ' + (curve.c[i * 3 + 1].x * size).toFixed(3) + ' '
-            + (curve.c[i * 3 + 1].y * size).toFixed(3) + ' ';
-        s += (curve.c[i * 3 + 2].x * size).toFixed(3) + ' '
-            + (curve.c[i * 3 + 2].y * size).toFixed(3) + ' ';
+        var s = 'L ' + (curve.c[i * 3 + 1].x * size).toFixed(3) + ' ' +
+            (curve.c[i * 3 + 1].y * size).toFixed(3) + ' ';
+        s += (curve.c[i * 3 + 2].x * size).toFixed(3) + ' ' +
+            (curve.c[i * 3 + 2].y * size).toFixed(3) + ' ';
         return s;
       }
 
-      var n = curve.n, i, tag;
-      var p = 'M' + (curve.c[(n - 1) * 3 + 2].x * size).toFixed(3)
-          + ' ' + (curve.c[(n - 1) * 3 + 2].y * size).toFixed(3) + ' ';
+      var n = curve.n, i;
+      var p = 'M' + (curve.c[(n - 1) * 3 + 2].x * size).toFixed(3) +
+          ' ' + (curve.c[(n - 1) * 3 + 2].y * size).toFixed(3) + ' ';
       for (i = 0; i < n; i++) {
         if (curve.tag[i] === "CURVE") {
           p += bezier(i);
@@ -1268,8 +1272,8 @@ var Potrace = (function() {
     var w = bm.w * size, h = bm.h * size,
       len = pathlist.length, c, i, strokec, fillc, fillrule;
 
-    var svg = '<svg id="svg" version="1.1" width="' + w + '" height="' + h 
-        + '" xmlns="http://www.w3.org/2000/svg">';
+    var svg = '<svg id="svg" version="1.1" width="' + w + '" height="' + h +
+        '" xmlns="http://www.w3.org/2000/svg">';
     svg += '<path d="';
     for (i = 0; i < len; i++) {
       c = pathlist[i].curve;
