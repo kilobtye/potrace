@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="a javascript port of potrace" />
+    <meta name="keywords" content="potrace,trace,vectorization,svg" />
+
+    <title>potrace</title>
+    <style>
+body {
+  margin: 30px;
+  background-color: #eee;
+}
+
+h1 {
+  font-weight:bold;
+  font-size:2.5em;
+  text-transform:capitalize;
+  letter-spacing: 0.1em;  
+}
+
+a:link, a:visited{
+  color:#6d6e73;
+}
+
+a:hover, a:focus, a:active {
+  color:#444;
+}
+
+p{
+  margin: 5px;
+}
+
+#imgdiv, #svgdiv {
+  display: none;
+  border: 2px solid #ccc;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+#drop {
+  border: 2px dashed #ccc;
+  width: 170px;
+  height: 50px;
+  padding: 10px;
+  margin: 20px 0;
+  text-align: center;
+  border-radius: 5px;
+}
+ 
+#drop.hovering{
+  border: 2px dashed #333;
+}
+
+#run, #save{
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 2px 5px;
+  text-decoration: none;
+  background-color: #ddd;
+}
+
+#run:hover, #save:hover{
+  background-color: #eee;
+}
+
+#imageInput {
+  display: none;
+}
+
+    </style>	
+  </head>
+
+  <body>
+    <header>
+      <h1>potrace</h1>
+    </header>
+    	
+    <article>
+      <p>A javascript port of <a href="http://potrace.sourceforge.net" target="_blank">Potrace</a>.</p>
+      <p><a href="https://github.com/kilobtye/potrace">source code</a></p>
+      <input type="file" id="imageInput" accept="image/*">
+      <div id="drop"><a href="#" id="imageSelect">open an image</a> <br> or drag an image here</div>
+      <div>
+        <a href="#" id="run">open Yao.jpg</a>
+        <a href="#" id="save">download</a>
+      </div>
+      <div id="imgdiv"> </div>
+      <div> </div>
+      <div id="svgdiv"> </div>
+    </article>
+
+<script src="potrace.js"></script>
+<script>
+
+window.onload = function(){
+  var imageSelect = document.getElementById("imageSelect"),
+      imageInput = document.getElementById("imageInput");  
+  imageSelect.addEventListener("click", function (e) {
+    imageInput.click();
+    e.preventDefault();
+  }, false);
+  
+  imageInput.addEventListener("change", function (e) {
+    handleFiles(this.files);
+  }, false);
+  
+  document.getElementById("run").addEventListener("click", function (e) {
+    Potrace.loadImageFromUrl("yao.jpg");
+    Potrace.process(function(){
+      displayImg();
+      displaySVG(3);
+    });
+  }, false);
+  
+  document.getElementById("save").addEventListener("click", function (e) {
+	 e.target.download = "potrace" + (new Date()).toLocaleTimeString() + ".svg";
+	 e.target.href = "data:image/svg+xml;," + Potrace.getSVG(1);
+  }, false);  
+  
+  var drop = document.getElementById('drop');
+  drop.addEventListener("dragenter", function (e) {
+    if (e.preventDefault) e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    this.classList.add('hovering');
+    return false;
+  }, false);
+  
+  drop.addEventListener("dragleave", function (e) {
+    if (e.preventDefault) e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    this.classList.remove('hovering');
+    return false;
+  }, false);
+  
+  drop.addEventListener("dragover", function (e) {
+    if (e.preventDefault) e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    this.classList.add('hovering');
+    return false;
+  }, false);
+  
+  drop.addEventListener("drop", function (e) {
+    if (e.preventDefault) e.preventDefault();
+    this.classList.remove('hovering');
+    handleFiles(e.dataTransfer.files);
+    return false;
+  }, false);
+};
+
+function handleFiles(files) {
+  Potrace.loadImageFromFile(files[0]);
+  Potrace.process(function(){
+    displayImg();
+    displaySVG(1);
+  });
+}
+
+function displayImg(){
+  var imgdiv = document.getElementById('imgdiv');
+  imgdiv.style.display = 'inline-block';
+  imgdiv.innerHTML = "<p>Input image:</p>";
+  imgdiv.appendChild(Potrace.img);
+}
+
+function displaySVG(size, type){
+  var svgdiv = document.getElementById('svgdiv');
+  svgdiv.style.display = 'inline-block';
+  svgdiv.innerHTML = "<p>Result:</p>" + Potrace.getSVG(size, type);
+}
+
+</script>
+
+  </body>
+</html>
