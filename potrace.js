@@ -1,7 +1,7 @@
 /* 
  * A javascript port of Potrace (http://potrace.sourceforge.net).
  * 
- * Licensed under the GPL
+ * Licensed under MIT
  * 
  * Usage
  *   loadImageFromFile(file) : load image from File API
@@ -26,7 +26,7 @@
  *   process(callback) : wait for the image be loaded, then run potrace algorithm,
  *                       then call callback function.
  * 
- *   getSVG: getSVG(size, opt_type) : return a string of generated SVG image.
+ *   getSVG(size, opt_type) : return a string of generated SVG image.
  *                                    result_image_size = original_image_size * size
  *                                    optional parameter opt_type can be "curve"
  */
