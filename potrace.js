@@ -1,7 +1,7 @@
 /* 
  * A javascript port of Potrace (http://potrace.sourceforge.net).
  * 
- * Licensed under MIT
+ * Licensed under the GPL
  * 
  * Usage
  *   loadImageFromFile(file) : load image from File API
