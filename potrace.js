@@ -138,7 +138,17 @@ var Potrace = (function() {
       clear();
     }
     imgElement.src = url;
-    
+
+  }
+
+  function loadImageFromCanvas(canvas) {
+    if (info.isReady) {
+      clear();
+    }
+
+    imgCanvas = canvas;
+
+    loadBm();
   }
   
   function setParameter(obj) {
@@ -1295,6 +1305,7 @@ var Potrace = (function() {
   return{
     loadImageFromFile: loadImageFromFile,
     loadImageFromUrl: loadImageFromUrl,
+    loadImageFromCanvas: loadImageFromCanvas,
     setParameter: setParameter,
     process: process,
     getSVG: getSVG,
