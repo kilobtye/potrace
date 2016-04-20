@@ -10,7 +10,7 @@
  *     input color/grayscale image is simply converted to binary image. no pre-
  *     process is performed.
  *   loadImageFromUrl(canvas): load image from html5 canvas element
- *     when using load from canvas potrace can be used synchronous
+ *     when using load from canvas potrace can be used synchronously
  *
  *   setParameter({para1: value, ...}) : set parameters
  *     parameters:
