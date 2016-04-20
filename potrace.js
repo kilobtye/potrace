@@ -1300,7 +1300,7 @@ var Potrace = (function() {
 
       function bezier(i) {
         var x1 = curve.c[i * 3 + 0].x;
-        var y1 = curve.c[i * 3 + 0].x;
+        var y1 = curve.c[i * 3 + 0].y;
         var x2 = curve.c[i * 3 + 1].x;
         var y2 = curve.c[i * 3 + 1].y;
         var x = curve.c[i * 3 + 2].x;
