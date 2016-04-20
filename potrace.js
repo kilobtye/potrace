@@ -1359,7 +1359,8 @@ var Potrace = (function() {
       return p;
     }
 
-    var len = pathlist.length, c, i;
+    var w = bm.w, h = bm.h,
+      len = pathlist.length, c, i;
 
     var paths = [];
     for (i = 0; i < len; i++) {
@@ -1367,7 +1368,11 @@ var Potrace = (function() {
       paths.push(path(c));
     }
 
-    return paths;
+    return {
+      width: w,
+      height: h,
+      paths: paths
+    }
   }
 
   return{
