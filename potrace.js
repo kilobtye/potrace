@@ -29,6 +29,8 @@
  *   getSVG(size, opt_type) : return a string of generated SVG image.
  *                                    result_image_size = original_image_size * size
  *                                    optional parameter opt_type can be "curve"
+ *
+ *   getPaths() : returns an array with path data.
  */
 
 var Potrace = (function() {
