@@ -1,4 +1,5 @@
-/* 
+/* Copyright (C) 2001-2013 Peter Selinger.
+ *
  * A javascript port of Potrace (http://potrace.sourceforge.net).
  * 
  * Licensed under the GPL
