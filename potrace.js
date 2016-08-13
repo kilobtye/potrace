@@ -10,7 +10,9 @@
  *     because of the same-origin policy, can not load image from another domain.
  *     input color/grayscale image is simply converted to binary image. no pre-
  *     process is performed.
- * 
+ *   loadImageFromUrl(canvas): load image from html5 canvas element
+ *     when using load from canvas potrace can be used synchronously
+ *
  *   setParameter({para1: value, ...}) : set parameters
  *     parameters:
  *        turnpolicy ("black" / "white" / "left" / "right" / "minority" / "majority")
@@ -139,7 +141,17 @@ var Potrace = (function() {
       clear();
     }
     imgElement.src = url;
-    
+
+  }
+
+  function loadImageFromCanvas(canvas) {
+    if (info.isReady) {
+      clear();
+    }
+
+    imgCanvas = canvas;
+
+    loadBm();
   }
   
   function setParameter(obj) {
@@ -1296,6 +1308,7 @@ var Potrace = (function() {
   return{
     loadImageFromFile: loadImageFromFile,
     loadImageFromUrl: loadImageFromUrl,
+    loadImageFromCanvas: loadImageFromCanvas,
     setParameter: setParameter,
     process: process,
     getSVG: getSVG,
