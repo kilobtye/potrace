@@ -32,23 +32,3 @@ export function createBitmap(imgCanvas) {
 
   return bm;
 }
-
-export function mod(a, n) {
-  if (a >= n) {
-    return a % n;
-  } else if (a >= 0) {
-    return a;
-  } else {
-    return n - 1 - (-1 - a) % n;
-  }
-}
-
-export function sign(i) {
-  if (i > 0) {
-    return 1;
-  } else if (i < 0) {
-    return -1;
-  } else {
-    return 0;
-  }
-}
