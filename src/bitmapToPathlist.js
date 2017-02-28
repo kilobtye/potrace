@@ -22,26 +22,21 @@ function findNext(point, bitmapTarget) {
   return false;
 }
 
-function findPath(point, bitmap, bitmapTarget, info) {
-  const path = new Path();
-
+function findPath(point, bitmap, bitmapTarget, options) {
   let { x, y } = point;
-
   let dirX = 0;
   let dirY = 1;
 
-  path.sign = bitmap.at(x, y) ? '+' : '-';
+  const points = [];
+  let area = 0;
+  const isHole = !bitmap.at(x, y);
 
   while (true) {
-    path.points.push(new Point(x, y));
-    if (x > path.maxX) path.maxX = x;
-    if (x < path.minX) path.minX = x;
-    if (y > path.maxY) path.maxY = y;
-    if (y < path.minY) path.minY = y;
+    points.push(new Point(x, y));
 
     x += dirX;
     y += dirY;
-    path.area -= x * dirY;
+    area -= x * dirY;
 
     if (x === point.x && y === point.y) break;
 
@@ -49,7 +44,7 @@ function findPath(point, bitmap, bitmapTarget, info) {
     const right = bitmapTarget.at(x + (dirX - dirY - 1) / 2, y + (dirY + dirX - 1) / 2);
 
     if (right && !left) {
-      if (turn(info.turnpolicy, path, bitmapTarget, x, y)) {
+      if (turn(options.turnpolicy, isHole, bitmapTarget, x, y)) {
         const tmp = dirX;
         dirX = -dirY;
         dirY = tmp;
@@ -69,19 +64,19 @@ function findPath(point, bitmap, bitmapTarget, info) {
     }
   }
 
-  return path;
+  return new Path(points, area, isHole);
 }
 
-function turn(turnpolicy, path, bitmap, x, y) {
+function turn(turnpolicy, isHole, bitmap, x, y) {
   switch (turnpolicy) {
     case 'right':
       return true;
 
     case 'black':
-      return path.sign === '+';
+      return !isHole;
 
     case 'white':
-      return path.sign === '-';
+      return isHole;
 
     case 'majority':
       return majority(x, y, bitmap);

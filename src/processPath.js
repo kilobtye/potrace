@@ -906,7 +906,7 @@ function processPath(pathlist, info) {
     bestPolygon(path);
     adjustVertices(path);
 
-    if (path.sign === "-") {
+    if (path.isHole) {
       reverse(path);
     }
 
