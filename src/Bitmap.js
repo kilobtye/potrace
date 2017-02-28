@@ -1,39 +1,56 @@
 import Point from './Point.js';
 
-function Bitmap(w, h) {
-  this.w = w;
-  this.h = h;
-  this.size = w * h;
-  this.arraybuffer = new ArrayBuffer(this.size);
-  this.data = new Int8Array(this.arraybuffer);
+export default class Bitmap {
+  constructor(width, height) {
+    this.width = width;
+    this.height = height;
+    this.size = width * height;
+    this.data = new Int8Array(this.size);
+  }
+
+  at(x, y) {
+    return (x >= 0 && x < this.width && y >=0 && y < this.height) &&
+        this.data[this.width * y + x] === 1;
+  }
+
+  flip(x, y) {
+    if (this.at(x, y)) {
+      this.data[this.width * y + x] = 0;
+    } else {
+      this.data[this.width * y + x] = 1;
+    }
+  }
+
+  copy() {
+    var bm = new Bitmap(this.width, this.height), i;
+    for (i = 0; i < this.size; i++) {
+      bm.data[i] = this.data[i];
+    }
+    return bm;
+  }
+
+  index(i) {
+    const x = i % this.width;
+    const y = Math.floor(i / this.width);
+    return new Point(x, y);
+  }
+
+  xOrPath(path) {
+    var y1 = path.pt[0].y,
+      len = path.len,
+      x, y, maxX, minY, i, j;
+    for (i = 1; i < len; i++) {
+      x = path.pt[i].x;
+      y = path.pt[i].y;
+
+      if (y !== y1) {
+        minY = y1 < y ? y1 : y;
+        maxX = path.maxX;
+        for (j = x; j < maxX; j++) {
+          this.flip(j, minY);
+        }
+        y1 = y;
+      }
+    }
+  }
 }
-
-Bitmap.prototype.at = function (x, y) {
-  return (x >= 0 && x < this.w && y >=0 && y < this.h) &&
-      this.data[this.w * y + x] === 1;
-};
-
-Bitmap.prototype.index = function(i) {
-  var point = new Point();
-  point.y = Math.floor(i / this.w);
-  point.x = i - point.y * this.w;
-  return point;
-};
-
-Bitmap.prototype.flip = function(x, y) {
-  if (this.at(x, y)) {
-    this.data[this.w * y + x] = 0;
-  } else {
-    this.data[this.w * y + x] = 1;
-  }
-};
-
-Bitmap.prototype.copy = function() {
-  var bm = new Bitmap(this.w, this.h), i;
-  for (i = 0; i < this.size; i++) {
-    bm.data[i] = this.data[i];
-  }
-  return bm;
-};
-
-export default Bitmap;

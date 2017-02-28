@@ -1,10 +1,9 @@
-function Point(x, y) {
-  this.x = x;
-  this.y = y;
+export default class Point {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+  copy() {
+    return new Point(this.x, this.y);
+  }
 }
-
-Point.prototype.copy = function(){
-  return new Point(this.x, this.y);
-};
-
-export default Point;

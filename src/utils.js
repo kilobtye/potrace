@@ -9,26 +9,22 @@ export function loadImage(url) {
   });
 }
 
-export function createBitmap(imgCanvas) {
-  var ctx = imgCanvas.getContext('2d');
-  var bm = new Bitmap(imgCanvas.width, imgCanvas.height);
-  var imgdataobj = ctx.getImageData(0, 0, bm.w, bm.h);
-  var l = imgdataobj.data.length, i, j, color;
+export function createBitmap(canvas) {
+  const { width, height } = canvas;
+  const imageData = canvas.getContext('2d').getImageData(0, 0, width, height);
+  const bitmap = new Bitmap(width, height);
 
-  let zero = 0;
-  let one = 0;
+  let imageDataIndex = 0;
+  const length = width * height;
+  for (let bitmapIndex = 0; bitmapIndex < length; bitmapIndex ++) {
+    const r = 0.2126 * imageData.data[imageDataIndex ++];
+    const g = 0.7153 * imageData.data[imageDataIndex ++];
+    const b = 0.0721 * imageData.data[imageDataIndex ++];
+    imageDataIndex ++; // alpha
+    const color = r + g + b;
 
-  for (i = 0, j = 0; i < l; i += 4, j++) {
-    color = 0.2126 * imgdataobj.data[i] + 0.7153 * imgdataobj.data[i + 1] +
-        0.0721 * imgdataobj.data[i + 2];
-    bm.data[j] = (color < 128 ? 1 : 0);
-
-    if (color < 128) {
-      one ++;
-    } else {
-      zero ++;
-    }
+    bitmap.data[bitmapIndex] = (color < 128 ? 1 : 0);
   }
 
-  return bm;
+  return bitmap;
 }
