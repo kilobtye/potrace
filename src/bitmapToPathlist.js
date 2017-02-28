@@ -17,7 +17,7 @@ function findPath(point, bitmap, bitmapTarget, info) {
   path.sign = bitmap.at(point.x, point.y) ? "+" : "-";
 
   while (true) {
-    path.pt.push(new Point(x, y));
+    path.points.push(new Point(x, y));
     if (x > path.maxX)
       path.maxX = x;
     if (x < path.minX)
@@ -26,7 +26,7 @@ function findPath(point, bitmap, bitmapTarget, info) {
       path.maxY = y;
     if (y < path.minY)
       path.minY = y;
-    path.len++;
+    path.length++;
 
     x += dirx;
     y += diry;

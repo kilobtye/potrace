@@ -22,11 +22,11 @@ export default class Bitmap {
   }
 
   copy() {
-    var bm = new Bitmap(this.width, this.height), i;
-    for (i = 0; i < this.size; i++) {
-      bm.data[i] = this.data[i];
+    const bitmap = new Bitmap(this.width, this.height);
+    for (let i = 0; i < this.size; i ++) {
+      bitmap.data[i] = this.data[i];
     }
-    return bm;
+    return bitmap;
   }
 
   index(i) {
@@ -36,17 +36,16 @@ export default class Bitmap {
   }
 
   xOrPath(path) {
-    var y1 = path.pt[0].y,
-      len = path.len,
-      x, y, maxX, minY, i, j;
-    for (i = 1; i < len; i++) {
-      x = path.pt[i].x;
-      y = path.pt[i].y;
+    let y1 = path.points[0].y;
+
+    for (let i = 1; i < path.length; i ++) {
+      const x = path.points[i].x;
+      const y = path.points[i].y;
 
       if (y !== y1) {
-        minY = y1 < y ? y1 : y;
-        maxX = path.maxX;
-        for (j = x; j < maxX; j++) {
+        const minY = Math.min(y1, y);
+        const maxX = path.maxX;
+        for (let j = x; j < maxX; j ++) {
           this.flip(j, minY);
         }
         y1 = y;
