@@ -1,6 +1,20 @@
 import Path from './Path.js';
 import Point from './Point.js';
 
+export default function bitmapToPathlist(bitmap, options) {
+  const bitmapTarget = bitmap.copy();
+  const pathlist = [];
+
+  for (let point = findNext(new Point(0, 0), bitmapTarget); point; point = findNext(point, bitmapTarget)) {
+    const path = findPath(point, bitmap, bitmapTarget, options);
+    if (path.area > options.turdsize) pathlist.push(path);
+
+    bitmapTarget.xOrPath(path);
+  }
+
+  return pathlist;
+}
+
 function findNext(point, bitmapTarget) {
   for (let i = point.toIndex(bitmapTarget.width, bitmapTarget.height); i < bitmapTarget.size; i ++) {
     if (bitmapTarget.data[i]) return bitmapTarget.index(i);
@@ -35,13 +49,7 @@ function findPath(point, bitmap, bitmapTarget, info) {
     const right = bitmapTarget.at(x + (dirX - dirY - 1) / 2, y + (dirY + dirX - 1) / 2);
 
     if (right && !left) {
-      if (
-        info.turnpolicy === 'right' ||
-        (info.turnpolicy === 'black' && path.sign === '+') ||
-        (info.turnpolicy === 'white' && path.sign === '-') ||
-        (info.turnpolicy === 'majority' && majority(x, y, bitmapTarget)) ||
-        (info.turnpolicy === 'minority' && !majority(x, y, bitmapTarget))
-      ) {
+      if (turn(info.turnpolicy, path, bitmapTarget, x, y)) {
         const tmp = dirX;
         dirX = -dirY;
         dirY = tmp;
@@ -64,34 +72,43 @@ function findPath(point, bitmap, bitmapTarget, info) {
   return path;
 }
 
-function majority(x, y, bitmapTarget) {
+function turn(turnpolicy, path, bitmap, x, y) {
+  switch (turnpolicy) {
+    case 'right':
+      return true;
+
+    case 'black':
+      return path.sign === '+';
+
+    case 'white':
+      return path.sign === '-';
+
+    case 'majority':
+      return majority(x, y, bitmap);
+
+    case 'minority':
+      return !majority(x, y, bitmap);
+
+    default:
+      return true;
+  }
+}
+
+function majority(x, y, bitmap) {
   for (let i = 2; i < 5; i ++) {
     let ct = 0;
     for (let a = -i + 1; a <= i - 1; a ++) {
-      ct += bitmapTarget.at(x + a, y + i - 1) ? 1 : -1;
-      ct += bitmapTarget.at(x + i - 1, y + a - 1) ? 1 : -1;
-      ct += bitmapTarget.at(x + a - 1, y - i) ? 1 : -1;
-      ct += bitmapTarget.at(x - i, y + a) ? 1 : -1;
+      ct += bitmap.at(x + a, y + i - 1) ? 1 : -1;
+      ct += bitmap.at(x + i - 1, y + a - 1) ? 1 : -1;
+      ct += bitmap.at(x + a - 1, y - i) ? 1 : -1;
+      ct += bitmap.at(x - i, y + a) ? 1 : -1;
     }
+
     if (ct > 0) {
-      return 1;
+      return true;
     } else if (ct < 0) {
-      return 0;
+      return false;
     }
   }
-  return 0;
-}
-
-export default function bitmapToPathlist(bitmap, options) {
-  const bitmapTarget = bitmap.copy();
-  const pathlist = [];
-
-  for (let point = findNext(new Point(0, 0), bitmapTarget); point; point = findNext(point, bitmapTarget)) {
-    const path = findPath(point, bitmap, bitmapTarget, options);
-    if (path.area > options.turdsize) pathlist.push(path);
-
-    bitmapTarget.xOrPath(path);
-  }
-
-  return pathlist;
+  return false;
 }

@@ -1,10 +1,10 @@
 import { loadImage, createBitmap } from './utils.js';
 import bitmapToPathlist from './bitmapToPathlist.js';
 import processPath from './processPath.js';
-import _getSVG from './getSVG.js';
+import getSVG from './getSVG.js';
 
 const OPTIONS = {
-  turnpolicy: 'minority',
+  turnpolicy: 'right',
   turdsize: 2,
   optcurve: true,
   alphamax: 1,
@@ -38,4 +38,4 @@ export function traceCanvas(canvas, options = {}) {
   return path;
 }
 
-export const getSVG = _getSVG;
+export { getSVG };
