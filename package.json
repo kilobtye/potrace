@@ -1,0 +1,26 @@
+{
+  "name": "potrace",
+  "version": "1.0.0",
+  "description": "potrace =======",
+  "main": "src/index.js",
+  "jspm": {
+    "name": "potrace",
+    "main": "potrace.js",
+    "devDependencies": {
+      "plugin-babel": "npm:systemjs-plugin-babel@^0.0.21"
+    }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/casperlamboo/potrace.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/casperlamboo/potrace/issues"
+  },
+  "homepage": "https://github.com/casperlamboo/potrace#readme"
+}
