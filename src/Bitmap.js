@@ -38,7 +38,7 @@ export default class Bitmap {
   xOrPath(path) {
     let y1 = path.points[0].y;
 
-    for (let i = 1; i < path.length; i ++) {
+    for (let i = 1; i < path.points.length; i ++) {
       const x = path.points[i].x;
       const y = path.points[i].y;
 

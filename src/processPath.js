@@ -174,7 +174,7 @@ function processPath(pathlist, info) {
     path.sums = [];
     var s = path.sums;
     s.push(new Sum(0, 0, 0, 0, 0));
-    for(i = 0; i < path.length; i++){
+    for(i = 0; i < path.points.length; i++){
       x = path.points[i].x - path.x0;
       y = path.points[i].y - path.y0;
       s.push(new Sum(s[i].x + x, s[i].y + y, s[i].xy + x * y,
@@ -184,7 +184,7 @@ function processPath(pathlist, info) {
 
   function calcLon(path) {
 
-    var n = path.length, pt = path.points, dir,
+    var n = path.points.length, pt = path.points, dir,
       pivk = new Array(n),
       nc = new Array(n),
       ct = new Array(4);
@@ -298,7 +298,7 @@ function processPath(pathlist, info) {
 
     function penalty3(path, i, j) {
 
-      var n = path.length, pt = path.points, sums = path.sums;
+      var n = path.points.length, pt = path.points, sums = path.sums;
       var x, y, xy, x2, y2,
         k, a, b, c, s,
         px, py, ex, ey,
@@ -339,7 +339,7 @@ function processPath(pathlist, info) {
     }
 
     var i, j, m, k,
-    n = path.length,
+    n = path.points.length,
     pen = new Array(n + 1),
     prev = new Array(n + 1),
     clip0 = new Array(n),
@@ -410,7 +410,7 @@ function processPath(pathlist, info) {
 
     function pointslope(path, i, j, ctr, dir) {
 
-      var n = path.length, sums = path.sums,
+      var n = path.points.length, sums = path.sums,
         x, y, x2, xy, y2,
         k, a, b, c, lambda2, l, r=0;
 
@@ -468,7 +468,7 @@ function processPath(pathlist, info) {
       }
     }
 
-    var m = path.m, po = path.po, n = path.length, pt = path.points,
+    var m = path.m, po = path.po, n = path.points.length, pt = path.points,
       x0 = path.x0, y0 = path.y0,
       ctr = new Array(m), dir = new Array(m),
       q = new Array(m),
