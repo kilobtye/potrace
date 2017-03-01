@@ -11,10 +11,6 @@ const OPTIONS = {
   opttolerance: 0.2
 };
 
-export function traceFile(file, options) {
-  return traceUrl(URL.createObjectURL(file), options);
-}
-
 export async function traceUrl(url, options) {
   const image = await loadImage(url, options);
 
