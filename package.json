@@ -1,11 +1,14 @@
 {
   "name": "potrace-js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Traces bitmap images to vector paths",
   "main": "lib/index.js",
   "jspm": {
     "name": "potrace",
-    "main": "potrace.js",
+    "main": "index.js",
+    "directories": {
+      "lib": "src"
+    },
     "devDependencies": {
       "plugin-babel": "npm:systemjs-plugin-babel@^0.0.21"
     }
@@ -17,7 +20,7 @@
   },
   "babel": {
     "presets": [
-      "es2017"
+      "es2015"
     ],
     "plugins": [
       "add-module-exports"
@@ -38,7 +41,7 @@
     "babel-cli": "^6.23.0",
     "babel-core": "^6.23.1",
     "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-preset-es2017": "^6.22.0",
+    "babel-preset-es2015": "^6.22.0",
     "jspm": "^0.17.0-beta.40"
   }
 }
