@@ -18,6 +18,10 @@ export function traceFile(file, options) {
 export async function traceUrl(url, options) {
   const image = await loadImage(url, options);
 
+  return traceImage(image, options);
+}
+
+export function traceImage(image, options) {
   const canvas = document.createElement('canvas');
   canvas.width = image.width;
   canvas.height = image.height;
