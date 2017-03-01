@@ -1,5 +1,5 @@
 import { loadImage, createBitmap } from './utils.js';
-import bitmapToPathlist from './bitmapToPathlist.js';
+import bitmapToPathList from './bitmapToPathList.js';
 import processPath from './processPath.js';
 import getSVG from './getSVG.js';
 
@@ -32,10 +32,10 @@ export function traceCanvas(canvas, options = {}) {
   options = { ...options, ...OPTIONS };
 
   const bitmap = createBitmap(canvas);
-  const pathList = bitmapToPathlist(bitmap, options);
-  const path = processPath(pathList, options);
+  const pathList = bitmapToPathList(bitmap, options);
+  processPath(pathList, options);
 
-  return path;
+  return pathList;
 }
 
 export { getSVG };

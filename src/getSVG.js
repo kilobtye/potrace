@@ -1,4 +1,4 @@
-function getSVG(pathlist, size, opt_type) {
+function getSVG(pathList, size, opt_type) {
 
   function path(curve) {
 
@@ -35,13 +35,13 @@ function getSVG(pathlist, size, opt_type) {
   }
 
   var w = 846, h = 352,
-    len = pathlist.length, c, i, strokec, fillc, fillrule;
+    len = pathList.length, c, i, strokec, fillc, fillrule;
 
   var svg = '<svg id="svg" version="1.1" width="' + w + '" height="' + h +
       '" xmlns="http://www.w3.org/2000/svg">';
   svg += '<path d="';
   for (i = 0; i < len; i++) {
-    c = pathlist[i].curve;
+    c = pathList[i].curve;
     svg += path(c);
   }
   if (opt_type === "curve") {

@@ -14,4 +14,13 @@ export default class Path {
 
     this.curve = {};
   }
+  reverse() {
+    var curve = this.curve, m = curve.n, v = curve.vertex, i, j, tmp;
+
+    for (i=0, j=m-1; i<j; i++, j--) {
+      tmp = v[i];
+      v[i] = v[j];
+      v[j] = tmp;
+    }
+  }
 }

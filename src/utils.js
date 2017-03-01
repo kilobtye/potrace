@@ -20,11 +20,15 @@ export function createBitmap(canvas) {
     const r = 0.2126 * imageData.data[imageDataIndex ++];
     const g = 0.7153 * imageData.data[imageDataIndex ++];
     const b = 0.0721 * imageData.data[imageDataIndex ++];
-    imageDataIndex ++; // alpha
+    const a = imageDataIndex ++; // alpha
     const color = r + g + b;
 
     bitmap.data[bitmapIndex] = (color < 128 ? 1 : 0);
   }
 
   return bitmap;
+}
+
+export function sign(i) {
+  return i > 0 ? 1 : i < 0 ? -1 : 0;
 }

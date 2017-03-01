@@ -1,18 +1,18 @@
 import Path from './Path.js';
 import Point from './Point.js';
 
-export default function bitmapToPathlist(bitmap, options) {
+export default function bitmapToPathList(bitmap, options) {
   const bitmapTarget = bitmap.copy();
-  const pathlist = [];
+  const pathList = [];
 
   for (let point = findNext(new Point(0, 0), bitmapTarget); point; point = findNext(point, bitmapTarget)) {
     const path = findPath(point, bitmap, bitmapTarget, options);
-    if (path.area > options.turdsize) pathlist.push(path);
+    if (path.area > options.turdsize) pathList.push(path);
 
     bitmapTarget.xOrPath(path);
   }
 
-  return pathlist;
+  return pathList;
 }
 
 function findNext(point, bitmapTarget) {
