@@ -28,9 +28,7 @@ export function traceImage(image, options) {
   return traceCanvas(canvas, options);
 }
 
-export function traceCanvas(canvas, options = {}) {
-  options = { ...options, ...OPTIONS };
-
+export function traceCanvas(canvas, options = OPTIONS) {
   const bitmap = createBitmap(canvas);
   const pathList = bitmapToPathList(bitmap, options);
   processPath(pathList, options);
