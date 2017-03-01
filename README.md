@@ -89,3 +89,11 @@ Converts trace result to svg.
 ```javascript
 svg: String = POTRACE.getSVG([...Path])
 ```
+
+**POTRACE.getPaths**
+
+Converts trace result to readable paths.
+
+```javascript
+svg: String = POTRACE.getPaths([...Path])
+```
