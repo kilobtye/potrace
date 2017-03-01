@@ -63,7 +63,7 @@ export default function getPaths(pathlist) {
     return p;
   }
 
-  var w = bm.w, h = bm.h, len = pathlist.length, c, i;
+  var len = pathlist.length, c, i;
 
   var paths = [];
   for (i = 0; i < len; i++) {
@@ -71,9 +71,5 @@ export default function getPaths(pathlist) {
     paths.push(path(c));
   }
 
-  return {
-    width: w,
-    height: h,
-    paths: paths
-  }
+  return paths;
 }
