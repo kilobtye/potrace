@@ -1,6 +1,6 @@
 {
   "name": "potrace-js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Traces bitmap images to vector paths",
   "main": "lib/index.js",
   "jspm": {
