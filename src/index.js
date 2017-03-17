@@ -3,6 +3,7 @@ import bitmapToPathList from './bitmapToPathList.js';
 import processPath from './processPath.js';
 import getSVG from './getSVG.js';
 import getPaths from './getPaths.js';
+import Bitmap from './Bitmap.js';
 
 const OPTIONS = {
   turnpolicy: 'right',
@@ -29,12 +30,17 @@ export function traceImage(image, options) {
   return traceCanvas(canvas, options);
 }
 
-export function traceCanvas(canvas, options = OPTIONS) {
+export function traceCanvas(canvas, options) {
   const bitmap = createBitmap(canvas);
+
+  return traceBitmap(bitmap, options);
+}
+
+export function traceBitmap(bitmap, options = OPTIONS) {
   const pathList = bitmapToPathList(bitmap, options);
   processPath(pathList, options);
 
   return pathList;
 }
 
-export { getSVG, getPaths };
+export { getSVG, getPaths, Bitmap };

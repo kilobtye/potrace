@@ -82,6 +82,17 @@ Traces a given canvas.
   - canvas: canvas containing the image
   - options: trace options
 
+**POTRACE.bitmap**
+
+Traces a given bitmap.
+
+  ```javascript
+  [...Path] = POTRACE.traceBitmap(bitmap: POTRACE.Bitmap, [ options: Object ])
+  ```
+    - bitmap: bitmap containing image info (1 and 0 values)
+    - options: trace options
+
+
 **POTRACE.getSVG**
 
 Converts trace result to svg.
